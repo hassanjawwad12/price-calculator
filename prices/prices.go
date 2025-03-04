@@ -4,7 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
+
+	"github.com/hassanjawwad12/price-calculator/conversion"
 )
 
 type TaxIncludedPriceJob struct {
@@ -45,23 +46,16 @@ func (job *TaxIncludedPriceJob) LoadData() {
 		return
 	}
 
-	prices := make([]float64, len(lines))
-
-	// convert string to float
-	for lineIndex, line := range lines {
-		floatPrice, err := strconv.ParseFloat(line, 64)
-
-		if err != nil {
-			fmt.Println("Error converting string to float")
-			fmt.Println(err)
-			file.Close()
-			return
-		}
-
-		prices[lineIndex] = floatPrice
+	prices, err := conversion.StringstoFloat(lines)
+	if err != nil {
+		fmt.Println("Error converting string to float")
+		fmt.Println(err)
+		file.Close()
+		return
 	}
 
 	job.InputPrices = prices
+	file.Close()
 }
 
 func (job *TaxIncludedPriceJob) Process() {
@@ -69,10 +63,11 @@ func (job *TaxIncludedPriceJob) Process() {
 	// Load data from file
 	job.LoadData()
 
-	result := make(map[string]float64)
+	result := make(map[string]string)
 	// key is price and value is tax applied price
 	for _, price := range job.InputPrices {
-		result[fmt.Sprintf("%.2f", price)] = price * (1 + job.TaxRate)
+		taxIncludedPrice := price * (1 + job.TaxRate)
+		result[fmt.Sprintf("%.2f", price)] = fmt.Sprintf("%.2f", taxIncludedPrice)
 	}
 
 	fmt.Println(result)
