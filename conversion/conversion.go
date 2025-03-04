@@ -5,19 +5,18 @@ import (
 	"strconv"
 )
 
-func StringstoFloat(input []string) ([]float64, error) {
+func StringsToFloats(strings []string) ([]float64, error) {
+	var floats []float64
 
-	floats := make([]float64, len(input))
-
-	for lineIndex, line := range input {
-		floatPrice, err := strconv.ParseFloat(line, 64)
+	for _, stringVal := range strings {
+		floatVal, err := strconv.ParseFloat(stringVal, 64)
 
 		if err != nil {
-			return nil, errors.New("error converting string to float")
+			return nil, errors.New("failed to convert string to float")
 		}
 
-		floats[lineIndex] = floatPrice
-		// floats = append(floats, floatPrice)
+		floats = append(floats, floatVal)
 	}
+
 	return floats, nil
 }

@@ -1,16 +1,19 @@
 package main
 
 import (
+	"fmt"
+
+	"github.com/hassanjawwad12/price-calculator/filemanager"
 	"github.com/hassanjawwad12/price-calculator/prices"
 )
 
 func main() {
-
-	taxRates := []float64{0.1, 0.2, 0.3, 0.4, 0.5}
+	taxRates := []float64{0, 0.07, 0.1, 0.15}
 
 	for _, taxRate := range taxRates {
-		pricejob := prices.NewTaxIncludedPriceJob(taxRate)
-		// map created for each tax rate
-		pricejob.Process()
+		fm := filemanager.New("prices.txt", fmt.Sprintf("result_%.0f.json", taxRate*100))
+		priceJob := prices.NewTaxIncludedPriceJob(fm, taxRate)
+		priceJob.Process()
 	}
+
 }
